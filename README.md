@@ -32,4 +32,4 @@ The earlier example should be sufficient for simple use cases,  but if you need 
 * Or use local files as cache for remote FTP storage.
 * If you’re afraid of storing all persistence files in a single folder, have Zysl split it up into subfolders automatically.
 * Accessing the store from multiple threads? You won’t have to deal with transactions, simple use the provided thread-safe wrapper.
-* You thought file storage is not atomic? With Zysl, it is, regardless of the technology and file system of the backing store. Why, yes, it’s magic.
+* You thought using file storage as backend is not atomic? With Zysl, it is - regardless of the technology and file system of the backing store. Be it NTFS, FAT or a remote SMB or FTP share. Why, yes, it’s magic.
