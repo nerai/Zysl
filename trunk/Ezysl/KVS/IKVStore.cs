@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace Ezysl.KVS
+namespace Zysl.KVS
 {
 	public interface IKVStore<TKey, TValue> : IEnumerable<KeyValuePair<TKey, TValue>>
 	{

@@ -5,7 +5,7 @@ using System.Linq;
 using System.Text;
 using NLog;
 
-namespace Ezysl.BinStores
+namespace Zysl.BinStores
 {
 	public class GenericBackedCache :
 		IBinStore,

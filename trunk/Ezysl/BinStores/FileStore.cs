@@ -5,9 +5,9 @@ using System.IO;
 using System.Linq;
 using System.Security.AccessControl;
 using System.Text;
-using Ezysl.Utils;
+using Zysl.Utils;
 
-namespace Ezysl.BinStores
+namespace Zysl.BinStores
 {
 	public class FileStore : IBinStore
 	{

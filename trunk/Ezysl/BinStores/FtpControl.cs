@@ -3,10 +3,10 @@ using System.Collections.Generic;
 using System.Configuration;
 using System.Diagnostics.CodeAnalysis;
 using System.Net;
-using Ezysl.Utils;
+using Zysl.Utils;
 using NLog;
 
-namespace Ezysl.BinStores
+namespace Zysl.BinStores
 {
 	internal class FtpControl
 	{

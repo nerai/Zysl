@@ -2,10 +2,10 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using Ezysl.BinStores;
-using Ezysl.KVS;
+using Zysl.BinStores;
+using Zysl.KVS;
 
-namespace Ezysl.Test
+namespace Zysl.Test
 {
 	internal class Program
 	{

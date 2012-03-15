@@ -7,11 +7,11 @@ using System.Linq;
 using System.Runtime.Serialization;
 using System.Security.Cryptography;
 using System.Text;
-using Ezysl.BinStores;
+using Zysl.BinStores;
 using ProtoBuf;
 using ProtoBuf.Meta;
 
-namespace Ezysl.KVS
+namespace Zysl.KVS
 {
 	public class KVStore<TKey, TValue> :
 		IDisposable,

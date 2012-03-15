@@ -5,7 +5,7 @@ using System.IO;
 using System.Linq;
 using System.Text;
 
-namespace Ezysl.BinStores
+namespace Zysl.BinStores
 {
 	public class FtpStore : IBinStore
 	{

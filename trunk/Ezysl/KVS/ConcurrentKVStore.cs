@@ -10,7 +10,7 @@ using System.Text;
 using ProtoBuf;
 using ProtoBuf.Meta;
 
-namespace Ezysl.KVS
+namespace Zysl.KVS
 {
 	public class ConcurrentKVStore<TKey, TValue> :
 		IDisposable,

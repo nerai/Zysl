@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-namespace Ezysl.BinStores
+namespace Zysl.BinStores
 {
 	public interface IBinStore : IDisposable
 	{

@@ -4,7 +4,7 @@ using System.Linq;
 using System.Runtime.Serialization;
 using System.Text;
 
-namespace Ezysl.Test
+namespace Zysl.Test
 {
 	[DataContract]
 	internal class TestItem

@@ -8,8 +8,8 @@
     <ProjectGuid>{63613AFA-B6A1-41B1-9342-E2169CD626B2}</ProjectGuid>
     <OutputType>Exe</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>Ezysl.Test</RootNamespace>
-    <AssemblyName>Ezysl.Test</AssemblyName>
+    <RootNamespace>Zysl.Test</RootNamespace>
+    <AssemblyName>Zysl.Test</AssemblyName>
     <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
     <TargetFrameworkProfile>Client</TargetFrameworkProfile>
     <FileAlignment>512</FileAlignment>
@@ -49,7 +49,7 @@
     <Compile Include="TestItem.cs" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\Ezysl\Ezysl.csproj">
+    <ProjectReference Include="..\Ezysl\Zysl.csproj">
       <Project>{7551B343-386B-43B7-81C6-B350DF0EB188}</Project>
       <Name>Ezysl</Name>
     </ProjectReference>
