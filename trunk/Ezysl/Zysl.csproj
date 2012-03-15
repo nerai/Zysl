@@ -8,8 +8,8 @@
     <ProjectGuid>{7551B343-386B-43B7-81C6-B350DF0EB188}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>Ezysl</RootNamespace>
-    <AssemblyName>Ezysl</AssemblyName>
+    <RootNamespace>Zysl</RootNamespace>
+    <AssemblyName>Zysl</AssemblyName>
     <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
   </PropertyGroup>
