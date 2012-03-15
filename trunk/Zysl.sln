@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 11.00
 # Visual Studio 2010
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Zysl", "Ezysl\Zysl.csproj", "{7551B343-386B-43B7-81C6-B350DF0EB188}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Zysl", "Zysl\Zysl.csproj", "{7551B343-386B-43B7-81C6-B350DF0EB188}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Zysl.Test", "Zysl.Test\Zysl.Test.csproj", "{63613AFA-B6A1-41B1-9342-E2169CD626B2}"
 EndProject

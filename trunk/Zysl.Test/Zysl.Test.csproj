@@ -49,7 +49,7 @@
     <Compile Include="TestItem.cs" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\Ezysl\Zysl.csproj">
+    <ProjectReference Include="..\Zysl\Zysl.csproj">
       <Project>{7551B343-386B-43B7-81C6-B350DF0EB188}</Project>
       <Name>Ezysl</Name>
     </ProjectReference>
