@@ -8,7 +8,7 @@ namespace Zysl.BinStores
 	public class ConcurrentStore : IBinStore
 	{
 		private readonly IBinStore _Backing;
-		private readonly object _Lock = new object ();
+		private readonly BlockingSet<string> _Lock = new BlockingSet<string> ();
 
 		public ConcurrentStore (IBinStore backing)
 		{
@@ -19,13 +19,13 @@ namespace Zysl.BinStores
 		{
 			get
 			{
-				lock (_Lock) {
+				using (_Lock.Block (key)) {
 					return _Backing[key];
 				}
 			}
 			set
 			{
-				lock (_Lock) {
+				using (_Lock.Block (key)) {
 					_Backing[key] = value;
 				}
 			}
@@ -33,42 +33,42 @@ namespace Zysl.BinStores
 
 		public bool ContainsKey (string key)
 		{
-			lock (_Lock) {
+			using (_Lock.Block (key)) {
 				return _Backing.ContainsKey (key);
 			}
 		}
 
 		public bool TryGetValue (string key, out byte[] value)
 		{
-			lock (_Lock) {
+			using (_Lock.Block (key)) {
 				return _Backing.TryGetValue (key, out value);
 			}
 		}
 
 		public bool TrySetValue (string key, byte[] value)
 		{
-			lock (_Lock) {
+			using (_Lock.Block (key)) {
 				return _Backing.TrySetValue (key, value);
 			}
 		}
 
 		public bool Remove (string key)
 		{
-			lock (_Lock) {
+			using (_Lock.Block (key)) {
 				return _Backing.Remove (key);
 			}
 		}
 
 		public void Flush ()
 		{
-			lock (_Lock) {
+			using (_Lock.Block ()) {
 				_Backing.Flush ();
 			}
 		}
 
 		public IEnumerable<string> ListKeys ()
 		{
-			lock (_Lock) {
+			using (_Lock.Block ()) {
 				return _Backing.ListKeys ();
 			}
 		}
@@ -77,7 +77,7 @@ namespace Zysl.BinStores
 		{
 			get
 			{
-				lock (_Lock) {
+				using (_Lock.Block ()) {
 					return _Backing.Count;
 				}
 			}
@@ -93,7 +93,7 @@ namespace Zysl.BinStores
 
 		public void Dispose ()
 		{
-			lock (_Lock) {
+			using (_Lock.Block ()) {
 				_Backing.Dispose ();
 			}
 		}

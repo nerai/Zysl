@@ -16,8 +16,8 @@ namespace Zysl.KVS
 		IDisposable,
 		IKVStore<TKey, TValue>
 	{
-		private readonly object _Lock = new object ();
 		private readonly IKVStore<TKey, TValue> _Backing;
+		private readonly BlockingSet<TKey> _LockXXX = new BlockingSet<TKey> ();
 
 		public ConcurrentKVStore (IKVStore<TKey, TValue> backing)
 		{
@@ -28,13 +28,13 @@ namespace Zysl.KVS
 		{
 			get
 			{
-				lock (_Lock) {
+				using (_LockXXX.Block (key)) {
 					return _Backing[key];
 				}
 			}
 			set
 			{
-				lock (_Lock) {
+				using (_LockXXX.Block (key)) {
 					_Backing[key] = value;
 				}
 			}
@@ -42,7 +42,7 @@ namespace Zysl.KVS
 
 		public IEnumerator<KeyValuePair<TKey, TValue>> GetEnumerator ()
 		{
-			lock (_Lock) {
+			using (_LockXXX.Block ()) {
 				return _Backing.GetEnumerator ();
 			}
 		}
@@ -54,28 +54,28 @@ namespace Zysl.KVS
 
 		public bool ContainsKey (TKey key)
 		{
-			lock (_Lock) {
+			using (_LockXXX.Block (key)) {
 				return _Backing.ContainsKey (key);
 			}
 		}
 
 		public bool TryGetValue (TKey key, out TValue value)
 		{
-			lock (_Lock) {
+			using (_LockXXX.Block (key)) {
 				return _Backing.TryGetValue (key, out value);
 			}
 		}
 
 		public bool Remove (TKey key)
 		{
-			lock (_Lock) {
+			using (_LockXXX.Block (key)) {
 				return _Backing.Remove (key);
 			}
 		}
 
 		public void Flush ()
 		{
-			lock (_Lock) {
+			using (_LockXXX.Block ()) {
 				_Backing.Flush ();
 			}
 		}
@@ -84,7 +84,7 @@ namespace Zysl.KVS
 		{
 			get
 			{
-				lock (_Lock) {
+				using (_LockXXX.Block ()) {
 					return _Backing.Count;
 				}
 			}
@@ -92,7 +92,7 @@ namespace Zysl.KVS
 
 		public void Dispose ()
 		{
-			lock (_Lock) {
+			using (_LockXXX.Block ()) {
 				_Backing.Dispose ();
 			}
 		}
