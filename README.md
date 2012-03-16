@@ -33,3 +33,12 @@ The earlier example should be sufficient for simple use cases,  but if you need 
 * If you’re afraid of storing all persistence files in a single folder, have Zysl split it up into subfolders automatically.
 * Accessing the store from multiple threads? You won’t have to deal with transactions, simple use the provided thread-safe wrapper.
 * You thought using file storage as backend is not atomic? With Zysl, it is - regardless of the technology and file system of the backing store. Be it NTFS, FAT or a remote SMB or FTP share. Why, yes, it’s magic.
+
+Strengths and weaknesses
+-
+
+You should consider using Zysl when:
+* You want to avoid steep learning curves and SQL
+* Keeping things simple and controllable is worth more than having tons of detailed options
+* The data won't be used in advanced queries (filtering, ordering, joining etc.)
+* You do not expect extremely high data throughput
