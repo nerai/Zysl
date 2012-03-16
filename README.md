@@ -38,6 +38,7 @@ Strengths and weaknesses
 -
 
 You should consider using Zysl when:
+
 * You want to avoid steep learning curves and SQL
 * Keeping things simple and controllable is worth more than having tons of detailed options
 * The data won't be used in advanced queries (filtering, ordering, joining etc.)
