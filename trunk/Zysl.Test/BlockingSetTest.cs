@@ -18,23 +18,41 @@ namespace Zysl
 					var id = rnd.NextDouble () < 0.5 ? "a" : "b";
 
 					Console.WriteLine (Thread.CurrentThread.Name + " waits for " + id);
-					set.Add (id);
+					set.Enter (id);
 					Console.WriteLine (Thread.CurrentThread.Name + " locked " + id);
 					Thread.Sleep (rnd.Next (0, 100));
 
-					set.Remove (id);
+					Console.WriteLine (Thread.CurrentThread.Name + " lets go of " + id);
+					set.Exit (id);
 					Console.WriteLine (Thread.CurrentThread.Name + " released " + id);
 					Thread.Sleep (rnd.Next (0, 100));
 				}
 			};
 
 			new Thread (() => thread ()) {
-				Name = "L1",
+				Name = "1",
 				IsBackground = true
 			}.Start ();
 
 			new Thread (() => thread ()) {
-				Name = "L2",
+				Name = "2",
+				IsBackground = true
+			}.Start ();
+
+			new Thread (() => {
+				for (; ; ) {
+					Console.WriteLine (Thread.CurrentThread.Name + " waits");
+					set.EnterGlobal ();
+					Console.WriteLine (Thread.CurrentThread.Name + " entered");
+					Thread.Sleep (rnd.Next (0, 100));
+
+					Console.WriteLine (Thread.CurrentThread.Name + " leaves ");
+					set.ExitGlobal ();
+					Console.WriteLine (Thread.CurrentThread.Name + " left ");
+					Thread.Sleep (rnd.Next (0, 100));
+				}
+			}) {
+				Name = "*",
 				IsBackground = true
 			}.Start ();
 
