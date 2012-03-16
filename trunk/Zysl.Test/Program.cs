@@ -12,6 +12,7 @@ namespace Zysl.Test
 		private static void Main (string[] args)
 		{
 			TestSimple ();
+			new BlockingSetTest ().Test ();
 		}
 
 		private static void TestSimple ()
