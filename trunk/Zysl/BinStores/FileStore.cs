@@ -11,7 +11,7 @@ namespace Zysl.BinStores
 {
 	public class FileStore : IBinStore
 	{
-		private const string CachePrefix = "FS_cache_";
+		private const string CachePrefix = "._FS_cache_";
 
 		private readonly PathSelector _Pathes;
 
@@ -111,8 +111,14 @@ namespace Zysl.BinStores
 		public bool Remove (string key)
 		{
 			var path = _Pathes.GetPath (key);
-			File.Delete (path);
-			return true;
+
+			if (File.Exists (path)) {
+				File.Delete (path);
+				return true;
+			}
+			else {
+				return false;
+			}
 		}
 
 		public void Flush ()

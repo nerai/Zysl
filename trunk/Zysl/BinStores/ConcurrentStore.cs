@@ -45,13 +45,6 @@ namespace Zysl.BinStores
 			}
 		}
 
-		public bool TrySetValue (string key, byte[] value)
-		{
-			using (_Lock.Block (key)) {
-				return _Backing.TrySetValue (key, value);
-			}
-		}
-
 		public bool Remove (string key)
 		{
 			using (_Lock.Block (key)) {

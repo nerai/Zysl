@@ -114,7 +114,7 @@ namespace Zysl.BinStores
 			return false;
 		}
 
-		public bool TrySetValue (string key, byte[] value)
+		public void TrySetValue (string key, byte[] value)
 		{
 			Compact ();
 
@@ -123,14 +123,7 @@ namespace Zysl.BinStores
 			_AccessCache[key] = count;
 
 			_Cache[key] = value;
-
-			if (_Cache.TrySetValue (key, value)) {
-				_Dirty.Add (key);
-				return true;
-			}
-			else {
-				return false;
-			}
+			_Dirty.Add (key);
 		}
 
 		public void Dispose ()
@@ -155,23 +148,21 @@ namespace Zysl.BinStores
 			}
 			set
 			{
-				if (!TrySetValue (key, value)) {
-					throw new Exception ("Failed to set value.");
-				}
+				TrySetValue (key, value);
 			}
 		}
 
 		public bool Remove (string key)
 		{
-			if (_Cache.Remove (key)) {
+			bool found = _Cache.Remove (key);
+			if (found) {
 				_AccessCache.Remove (key);
 				_Dirty.Remove (key);
 			}
-			else {
-				return false;
-			}
 
-			return _Files.Remove (key);
+			found |= _Files.Remove (key);
+
+			return found;
 		}
 
 		public IEnumerable<string> ListKeys ()

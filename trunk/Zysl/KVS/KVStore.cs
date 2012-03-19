@@ -7,9 +7,9 @@ using System.Linq;
 using System.Runtime.Serialization;
 using System.Security.Cryptography;
 using System.Text;
-using Zysl.BinStores;
 using ProtoBuf;
 using ProtoBuf.Meta;
+using Zysl.BinStores;
 
 namespace Zysl.KVS
 {

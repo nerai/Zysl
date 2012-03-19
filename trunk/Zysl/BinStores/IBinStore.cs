@@ -37,14 +37,6 @@ namespace Zysl.BinStores
 		bool TryGetValue (string key, out byte[] value);
 
 		/// <summary>
-		/// Attempts to set a value. Returns false if something went
-		/// wrong.
-		/// </summary>
-		// XXX wann ist das der fall???
-		bool TrySetValue (string key, byte[] value);
-
-		// false genau dann wenn verbindung fehlgeschlagen ? xxx
-		/// <summary>
 		/// Removes a key.
 		/// </summary>
 		bool Remove (string key);
