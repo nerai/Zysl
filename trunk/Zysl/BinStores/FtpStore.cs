@@ -79,7 +79,8 @@ namespace Zysl.BinStores
 			}
 
 			var path = _Pathes.GetPath (key);
-			value = _Ftp.Download (path);
+			value = _Ftp.Download (path); // todo: returns null on errors BUGBUG should throw or something (check in FileStore, too) xxx
+			// todo: maybe provide a base class that deals with this stuff --^
 			return true;
 		}
 

@@ -25,10 +25,9 @@ namespace Zysl.BinStores
 		/// </summary>
 		bool ContainsKey (string key);
 
-		// todo connection failed error??
 		/// <summary>
 		/// Attempts to retrieve a value. Returns false if the key is
-		/// not present.
+		/// not present. Throws on errors.
 		/// </summary>
 		bool TryGetValue (string key, out byte[] value);
 
@@ -36,6 +35,7 @@ namespace Zysl.BinStores
 		/// Attempts to set a value. Returns false if something went
 		/// wrong.
 		/// </summary>
+		// todo: false on errors is a BUG xxx
 		bool TrySetValue (string key, byte[] value);
 
 		// false genau dann wenn verbindung fehlgeschlagen
