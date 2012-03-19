@@ -37,7 +37,7 @@ namespace Zysl.BinStores
 		bool TryGetValue (string key, out byte[] value);
 
 		/// <summary>
-		/// Removes a key.
+		/// Removes a key. Returns true if the key was present.
 		/// </summary>
 		bool Remove (string key);
 
@@ -47,13 +47,19 @@ namespace Zysl.BinStores
 		/// </summary>
 		void Flush ();
 
-		// todo
+		/// <summary>
+		/// Enumerates all keys.
+		/// </summary>
 		IEnumerable<string> ListKeys ();
 
-		// todo
+		/// <summary>
+		/// Returns the number of keys currently present.
+		/// </summary>
 		long Count { get; }
 
-		// todo
+		/// <summary>
+		/// Returns the name given to this store.
+		/// </summary>
 		string Name { get; }
 	}
 }
