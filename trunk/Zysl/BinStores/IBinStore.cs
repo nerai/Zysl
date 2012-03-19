@@ -6,7 +6,12 @@ using System.Text;
 namespace Zysl.BinStores
 {
 	/// <summary>
-	/// Public interface to mark a store for binary data accessed via a string key.
+	/// Public interface to mark a store for binary data accessed via a
+	/// string key.
+	///
+	/// If the backing store fails to perform the requested action (e.g.
+	/// due to a connection issue) an exception will be thrown (even in the
+	/// Try-methods).
 	/// </summary>
 	public interface IBinStore : IDisposable
 	{
@@ -27,7 +32,7 @@ namespace Zysl.BinStores
 
 		/// <summary>
 		/// Attempts to retrieve a value. Returns false if the key is
-		/// not present. Throws on errors.
+		/// not present.
 		/// </summary>
 		bool TryGetValue (string key, out byte[] value);
 
@@ -35,10 +40,13 @@ namespace Zysl.BinStores
 		/// Attempts to set a value. Returns false if something went
 		/// wrong.
 		/// </summary>
-		// todo: false on errors is a BUG xxx
+		// XXX wann ist das der fall???
 		bool TrySetValue (string key, byte[] value);
 
-		// false genau dann wenn verbindung fehlgeschlagen
+		// false genau dann wenn verbindung fehlgeschlagen ? xxx
+		/// <summary>
+		/// Removes a key.
+		/// </summary>
 		bool Remove (string key);
 
 		/// <summary>
@@ -47,12 +55,13 @@ namespace Zysl.BinStores
 		/// </summary>
 		void Flush ();
 
+		// todo
 		IEnumerable<string> ListKeys ();
 
+		// todo
 		long Count { get; }
 
+		// todo
 		string Name { get; }
 	}
 }
-
-// todo: spezifizieren was bei fehlern passiert (key not found etc), connection issue, ...

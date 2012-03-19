@@ -79,8 +79,7 @@ namespace Zysl.BinStores
 			}
 
 			var path = _Pathes.GetPath (key);
-			value = _Ftp.Download (path); // todo: returns null on errors BUGBUG should throw or something (check in FileStore, too) xxx
-			// todo: maybe provide a base class that deals with this stuff --^
+			value = _Ftp.Downloadaw (path);
 			return true;
 		}
 
@@ -94,9 +93,7 @@ namespace Zysl.BinStores
 			var path = _Pathes.GetPath (key);
 			var tmp = path.Insert (path.Length - Path.GetFileName (path).Length, CachePrefix);
 
-			if (null == _Ftp.TryUpload (tmp, value)) {
-				return false; // todo: check that its fine to upload the same file again, overwriting the previous, failed copy
-			}
+			_Ftp.Upload (tmp, value);
 			if (!_Ftp.Delete (path)) {
 				return false;
 			}
@@ -119,10 +116,9 @@ namespace Zysl.BinStores
 			// no need to do anything here
 		}
 
-		public DateTime? Ping ()
+		public DateTime Ping ()
 		{
-			DateTime time;
-			return _Ftp.TryPing (out time) == null ? new DateTime? () : time;
+			return _Ftp.Ping ();
 		}
 
 		public IEnumerable<string> ListKeys ()

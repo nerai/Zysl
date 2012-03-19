@@ -45,20 +45,7 @@ namespace Zysl.BinStores
 			return request;
 		}
 
-		public Exception TryPing (out DateTime time)
-		{
-			try {
-				time = PingRaw ();
-				return null;
-			}
-			catch (WebException ex) {
-				_L.Warn (ex);
-				time = new DateTime (0);
-				return ex;
-			}
-		}
-
-		public DateTime PingRaw ()
+		public DateTime Ping ()
 		{
 			_L.Trace ("Ping");
 
@@ -71,19 +58,7 @@ namespace Zysl.BinStores
 			return now;
 		}
 
-		public Exception TryUpload (string filename, byte[] content)
-		{
-			try {
-				UploadXXX (filename, content);
-				return null;
-			}
-			catch (WebException ex) {
-				_L.Warn (ex);
-				return ex;
-			}
-		}
-
-		public void UploadXXX (string filename, byte[] content)
+		public void Upload (string filename, byte[] content)
 		{
 			_L.Trace ("Upload {0}b: {1}", content.Length, filename);
 
@@ -99,119 +74,91 @@ namespace Zysl.BinStores
 			}
 		}
 
-		public byte[] Download (string filename)
+		public byte[] Downloadaw (string filename)
 		{
 			_L.Trace ("Download {0}", filename);
 
-			try {
-				var request = CreateRequest (WebRequestMethods.Ftp.DownloadFile, "/" + filename);
+			var request = CreateRequest (WebRequestMethods.Ftp.DownloadFile, "/" + filename);
 
-				using (var response = (FtpWebResponse) request.GetResponse ()) {
-					_L.Info (response.StatusDescription);
+			using (var response = (FtpWebResponse) request.GetResponse ()) {
+				_L.Info (response.StatusDescription);
 
-					var stream = response.GetResponseStream ();
-					var bytes = stream.ReadAll ();
+				var stream = response.GetResponseStream ();
+				var bytes = stream.ReadAll ();
 
-					_L.Info (response.StatusDescription);
-					stream.Close ();
+				_L.Info (response.StatusDescription);
+				stream.Close ();
 
-					return bytes;
-				}
+				return bytes;
 			}
-			catch (WebException ex) {
-				_L.Warn (ex);
-			}
-
-			return null;
 		}
 
 		public bool Exists (string filename)
 		{
 			_L.Trace ("Exists {0}", filename);
 
+			var request = CreateRequest (WebRequestMethods.Ftp.GetFileSize, "/" + filename);
+
 			try {
-				var request = CreateRequest (WebRequestMethods.Ftp.GetFileSize, "/" + filename);
-
-				try {
-					using (var response = (FtpWebResponse) request.GetResponse ()) {
-						_L.Info (response.StatusDescription);
-					}
-					return true;
+				using (var response = (FtpWebResponse) request.GetResponse ()) {
+					_L.Info (response.StatusDescription);
 				}
-				catch (WebException) {
-					return false;
-				}
+				return true;
 			}
-			catch (WebException ex) {
-				_L.Warn (ex);
+			catch (WebException) {
+				return false;
 			}
-
-			return false;
 		}
 
 		public bool Delete (string filename)
 		{
 			_L.Trace ("Delete {0}", filename);
 
+			var request = CreateRequest (WebRequestMethods.Ftp.DeleteFile, "/" + filename);
+
 			try {
-				var request = CreateRequest (WebRequestMethods.Ftp.DeleteFile, "/" + filename);
-
-				try {
-					using (var response = (FtpWebResponse) request.GetResponse ()) {
-						_L.Info (response.StatusDescription);
-					}
-					return true;
+				using (var response = (FtpWebResponse) request.GetResponse ()) {
+					_L.Info (response.StatusDescription);
 				}
-				catch (WebException) {
-					return false;
-				}
+				return true;
 			}
-			catch (WebException ex) {
-				_L.Warn (ex);
+			catch (WebException) {
+				return false;
 			}
-
-			return false;
 		}
 
 		public List<string> GetFileList (string path)
 		{
 			_L.Trace ("GetFileList");
 
-			try {
-				var request = CreateRequest (WebRequestMethods.Ftp.ListDirectory, "/" + path);
+			var request = CreateRequest (WebRequestMethods.Ftp.ListDirectory, "/" + path);
 
-				using (var response = (FtpWebResponse) request.GetResponse ()) {
-					_L.Info (response.StatusDescription);
+			using (var response = (FtpWebResponse) request.GetResponse ()) {
+				_L.Info (response.StatusDescription);
 
-					var stream = response.GetResponseStream ();
-					var reader = new System.IO.StreamReader (stream);
-					var result = new List<string> ();
+				var stream = response.GetResponseStream ();
+				var reader = new System.IO.StreamReader (stream);
+				var result = new List<string> ();
 
-					var line = reader.ReadLine ();
-					while (line != null) {
-						result.Add (line);
-						line = reader.ReadLine ();
-					}
-
-					reader.Close ();
-
-					return result;
+				var line = reader.ReadLine ();
+				while (line != null) {
+					result.Add (line);
+					line = reader.ReadLine ();
 				}
-			}
-			catch (WebException ex) {
-				_L.Warn (ex);
-			}
 
-			return null;
+				reader.Close ();
+
+				return result;
+			}
 		}
 
 		public bool CreateDirectory (string path)
 		{
 			_L.Trace ("CreateDirectory");
 
-			try {
-				var request = CreateRequest (WebRequestMethods.Ftp.MakeDirectory, "/" + path);
+			var request = CreateRequest (WebRequestMethods.Ftp.MakeDirectory, "/" + path);
 
+			try {
 				using (var response = (FtpWebResponse) request.GetResponse ()) {
 					_L.Info (response.StatusDescription);
 				}
@@ -233,20 +180,13 @@ namespace Zysl.BinStores
 		{
 			_L.Trace ("Rename");
 
-			try {
-				var request = CreateRequest (WebRequestMethods.Ftp.Rename, "/" + src);
-				request.RenameTo = dst;
+			var request = CreateRequest (WebRequestMethods.Ftp.Rename, "/" + src);
+			request.RenameTo = dst;
 
-				using (var response = (FtpWebResponse) request.GetResponse ()) {
-					_L.Info (response.StatusDescription);
-				}
-				return true;
+			using (var response = (FtpWebResponse) request.GetResponse ()) {
+				_L.Info (response.StatusDescription);
 			}
-			catch (WebException ex) {
-				_L.Warn (ex);
-			}
-
-			return false;
+			return true;
 		}
 	}
 }
