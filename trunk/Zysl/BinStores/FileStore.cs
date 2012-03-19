@@ -49,15 +49,16 @@ namespace Zysl.BinStores
 		{
 			get
 			{
-				var path = _Pathes.GetPath (key);
-				using (var file = new FileStream (path, FileMode.Open, FileAccess.Read)) {
-					return file.ReadAll ();
+				byte[] value;
+				if (!TryGetValue (key, out value)) {
+					throw new Exception ("Failed to read value of " + key + " (path: " + _Pathes.GetPath (key) + ")");
 				}
+				return value;
 			}
 			set
 			{
 				if (!TrySetValue (key, value)) {
-					throw new Exception ("Failed to write value to " + _Pathes.GetPath (key));
+					throw new Exception ("Failed to write value of " + key + " (path: " + _Pathes.GetPath (key) + ")");
 				}
 			}
 		}
@@ -70,18 +71,21 @@ namespace Zysl.BinStores
 
 		public bool TryGetValue (string key, out byte[] value)
 		{
-			if (ContainsKey (key)) {
-				value = this[key];
-				return true;
-			}
-			else {
+			if (!ContainsKey (key)) {
 				value = null;
 				return false;
 			}
+
+			var path = _Pathes.GetPath (key);
+			using (var file = new FileStream (path, FileMode.Open, FileAccess.Read)) {
+				value = file.ReadAll ();
+			}
+			return true;
 		}
 
 		public bool TrySetValue (string key, byte[] value)
 		{
+			// todo: dont throw. use a subfolder instead (?)
 			if (Path.GetFileName (key).StartsWith (CachePrefix)) {
 				throw new ArgumentException ("Key must not start with cache prefix <" + CachePrefix + ">", "key");
 			}
