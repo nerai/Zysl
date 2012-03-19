@@ -94,8 +94,8 @@ namespace Zysl.BinStores
 			var path = _Pathes.GetPath (key);
 			var tmp = path.Insert (path.Length - Path.GetFileName (path).Length, CachePrefix);
 
-			if (!_Ftp.Upload (tmp, value)) {
-				return false;
+			if (null == _Ftp.TryUpload (tmp, value)) {
+				return false; // todo: check that its fine to upload the same file again, overwriting the previous, failed copy
 			}
 			if (!_Ftp.Delete (path)) {
 				return false;
@@ -119,9 +119,10 @@ namespace Zysl.BinStores
 			// no need to do anything here
 		}
 
-		public DateTime Ping ()
+		public DateTime? Ping ()
 		{
-			return _Ftp.Ping ();
+			DateTime time;
+			return _Ftp.TryPing (out time) == null ? new DateTime? () : time;
 		}
 
 		public IEnumerable<string> ListKeys ()

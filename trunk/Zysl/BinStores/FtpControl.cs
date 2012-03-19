@@ -3,8 +3,8 @@ using System.Collections.Generic;
 using System.Configuration;
 using System.Diagnostics.CodeAnalysis;
 using System.Net;
-using Zysl.Utils;
 using NLog;
+using Zysl.Utils;
 
 namespace Zysl.BinStores
 {
@@ -29,8 +29,6 @@ namespace Zysl.BinStores
 			_User = user;
 			_Pass = pass;
 			_Passive = passive;
-
-			Ping ();
 		}
 
 		private FtpWebRequest CreateRequest (string method, string file)
@@ -47,48 +45,58 @@ namespace Zysl.BinStores
 			return request;
 		}
 
-		public DateTime Ping ()
+		public Exception TryPing (out DateTime time)
+		{
+			try {
+				time = PingRaw ();
+				return null;
+			}
+			catch (WebException ex) {
+				_L.Warn (ex);
+				time = new DateTime (0);
+				return ex;
+			}
+		}
+
+		public DateTime PingRaw ()
 		{
 			_L.Trace ("Ping");
 
-			try {
-				var request = CreateRequest (WebRequestMethods.Ftp.PrintWorkingDirectory, "");
+			var request = CreateRequest (WebRequestMethods.Ftp.PrintWorkingDirectory, "");
 
-				var now = DateTime.UtcNow;
-				using (var response = (FtpWebResponse) request.GetResponse ()) {
-					_L.Info (response.StatusDescription);
-				}
-				return now;
+			var now = DateTime.UtcNow;
+			using (var response = (FtpWebResponse) request.GetResponse ()) {
+				_L.Info (response.StatusDescription);
+			}
+			return now;
+		}
+
+		public Exception TryUpload (string filename, byte[] content)
+		{
+			try {
+				UploadXXX (filename, content);
+				return null;
 			}
 			catch (WebException ex) {
 				_L.Warn (ex);
+				return ex;
 			}
-
-			return new DateTime (0);
 		}
 
-		public bool Upload (string filename, byte[] content)
+		public void UploadXXX (string filename, byte[] content)
 		{
 			_L.Trace ("Upload {0}b: {1}", content.Length, filename);
 
-			try {
-				var request = CreateRequest (WebRequestMethods.Ftp.UploadFile, "/" + filename);
+			var request = CreateRequest (WebRequestMethods.Ftp.UploadFile, "/" + filename);
 
-				request.ContentLength = content.Length;
-				var stream = request.GetRequestStream ();
-				stream.Write (content, 0, content.Length);
-				stream.Close ();
+			request.ContentLength = content.Length;
+			var stream = request.GetRequestStream ();
+			stream.Write (content, 0, content.Length);
+			stream.Close ();
 
-				using (var response = (FtpWebResponse) request.GetResponse ()) {
-					_L.Info (response.StatusDescription);
-				}
-				return true;
+			using (var response = (FtpWebResponse) request.GetResponse ()) {
+				_L.Info (response.StatusDescription); // todo: check! hint: fine to throw since we're remote anyway
 			}
-			catch (WebException ex) {
-				_L.Warn (ex);
-			}
-
-			return false;
 		}
 
 		public byte[] Download (string filename)
