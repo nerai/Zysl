@@ -33,7 +33,13 @@ namespace Zysl.KVS
 		private readonly IBinStore _Backing;
 		private readonly string _Prefix;
 
+		public KVStore () :
+			this (new FileStore ("./KVS~" + typeof (TKey).ToString () + "~" + typeof (TValue).ToString ()))
+		{
+		}
+
 		public KVStore (IBinStore backing)
+
 			: this (backing, SerializationMethod.NetDataContract)
 		{
 		}

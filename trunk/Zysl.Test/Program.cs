@@ -12,7 +12,14 @@ namespace Zysl.Test
 		private static void Main (string[] args)
 		{
 			TestSimple ();
+			TestAutoCtor ();
 			new BlockingSetTest ().Test ();
+		}
+
+		private static void TestAutoCtor ()
+		{
+			var kvs = new KVStore<DateTime, TestItem> ();
+			kvs[DateTime.Now] = new TestItem (DateTime.Now, new string[] { "foo" });
 		}
 
 		private static void TestSimple ()
