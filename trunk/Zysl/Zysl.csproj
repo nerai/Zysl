@@ -54,7 +54,6 @@
     <Compile Include="BinStores\FtpStore.cs" />
     <Compile Include="BinStores\GenericBackedCache.cs" />
     <Compile Include="BinStores\IBinStore.cs" />
-    <Compile Include="BinStores\PathSelector.cs" />
     <Compile Include="KVS\ConcurrentKVStore.cs" />
     <Compile Include="KVS\IKVStore.cs" />
     <Compile Include="KVS\KVStore.cs" />

@@ -12,16 +12,13 @@ namespace Zysl.BinStores
 		private const string CachePrefix = "FS_cache_";
 
 		private readonly FtpControl _Ftp;
-		private readonly PathSelector _Pathes;
+		private readonly string _Root;
 
-		public FtpStore (string server, string user, string pass, bool passive, PathSelector pathes)
+		public FtpStore (string server, string user, string pass, bool passive, string root)
 		{
 			_Ftp = new FtpControl (server, user, pass, passive);
-			_Pathes = pathes;
-
-			foreach (var dir in _Pathes.PossibleDirectories ()) {
-				_Ftp.CreateDirectory (dir);
-			}
+			_Root = root;
+			_Ftp.CreateDirectory (_Root);
 
 			/*
 			 * Recovery process, see FileStore class
@@ -34,13 +31,13 @@ namespace Zysl.BinStores
 					continue;
 				}
 
-				if (_Ftp.Exists (_Pathes.Root + file)) {
-					if (!_Ftp.Delete (_Pathes.Root + CachePrefix + file)) {
+				if (_Ftp.Exists (_Root + file)) {
+					if (!_Ftp.Delete (_Root + CachePrefix + file)) {
 						throw new Exception ("FTP recovery process failed: Unable to delete cache file " + file);
 					}
 				}
 				else {
-					if (!_Ftp.Rename (_Pathes.Root + CachePrefix + file, _Pathes.Root + file)) {
+					if (!_Ftp.Rename (_Root + CachePrefix + file, _Root + file)) {
 						throw new Exception ("FTP recovery process failed: Unable to move cache file " + file);
 					}
 				}
@@ -53,7 +50,7 @@ namespace Zysl.BinStores
 			{
 				byte[] value;
 				if (!TryGetValue (key, out value)) {
-					throw new Exception ("Failed to read value of " + key + " (path: " + _Pathes.GetPath (key) + ")");
+					throw new Exception ("Failed to read value of " + key + " (path: " + _Root + "/" + key + ")");
 				}
 				return value;
 			}
@@ -65,7 +62,7 @@ namespace Zysl.BinStores
 
 		public bool ContainsKey (string key)
 		{
-			var path = _Pathes.GetPath (key);
+			var path = _Root + "/" + key;
 			return _Ftp.Exists (path);
 		}
 
@@ -76,18 +73,19 @@ namespace Zysl.BinStores
 				return false;
 			}
 
-			var path = _Pathes.GetPath (key);
+			var path = _Root + "/" + key;
 			value = _Ftp.Downloadaw (path);
 			return true;
 		}
 
 		private void SetValue (string key, byte[] value)
 		{
+			// todo: use subfolder instead (in filestore too)
 			if (Path.GetFileName (key).StartsWith (CachePrefix)) {
 				throw new ArgumentException ("Key must not start with cache prefix <" + CachePrefix + ">", "key");
 			}
 
-			var path = _Pathes.GetPath (key);
+			var path = _Root + "/" + key;
 			var tmp = path.Insert (path.Length - Path.GetFileName (path).Length, CachePrefix);
 
 			_Ftp.Upload (tmp, value);
@@ -98,7 +96,7 @@ namespace Zysl.BinStores
 
 		public bool Remove (string key)
 		{
-			var path = _Pathes.GetPath (key);
+			var path = _Root + "/" + key;
 			return _Ftp.Delete (path);
 		}
 
@@ -119,11 +117,9 @@ namespace Zysl.BinStores
 
 		public IEnumerable<string> ListKeys ()
 		{
-			foreach (var dir in _Pathes.PossibleDirectories ()) {
-				foreach (var file in _Ftp.GetFileList (dir)) {
-					// todo: liefert das den namen, pfad oder pfad inkl root?? entsprechend abschneiden...
-					yield return file;
-				}
+			foreach (var file in _Ftp.GetFileList (_Root)) {
+				// todo: liefert das den namen, pfad oder pfad inkl root?? entsprechend abschneiden...
+				yield return file;
 			}
 		}
 
@@ -137,7 +133,7 @@ namespace Zysl.BinStores
 
 		public string Name
 		{
-			get { return _Pathes.Root; }
+			get { return _Root; }
 		}
 	}
 }

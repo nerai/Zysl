@@ -13,34 +13,25 @@ namespace Zysl.BinStores
 	{
 		private const string CachePrefix = "._FS_cache_";
 
-		private readonly PathSelector _Pathes;
+		private readonly string _Root;
 
-		public FileStore (string path)
-
-			: this (new PathSelector (path))
+		public FileStore (string root)
 		{
-		}
-
-		public FileStore (PathSelector pathes)
-		{
-			_Pathes = pathes;
-
-			foreach (var dir in _Pathes.PossibleDirectories ()) {
-				Directory.CreateDirectory (dir);
-			}
+			_Root = root;
+			Directory.CreateDirectory (_Root);
 
 			/*
 			 * Recovery process, as per http://stackoverflow.com/questions/9096380/implementing-atomic-file-writes-in-a-nontransactional-filesystem
 			 * This is required for acting as if NTFS supported atomic write natively.
 			 */
-			foreach (var path in Directory.GetFiles (_Pathes.Root, CachePrefix + "*", SearchOption.AllDirectories)) {
-				var file = path.Substring (_Pathes.Root.Length + CachePrefix.Length);
+			foreach (var path in Directory.GetFiles (_Root, CachePrefix + "*", SearchOption.AllDirectories)) {
+				var file = path.Substring (_Root.Length + CachePrefix.Length);
 
-				if (File.Exists (_Pathes.Root + file)) {
+				if (File.Exists (_Root + file)) {
 					File.Delete (path);
 				}
 				else {
-					File.Move (path, _Pathes.Root + file);
+					File.Move (path, _Root + file);
 				}
 			}
 		}
@@ -51,7 +42,7 @@ namespace Zysl.BinStores
 			{
 				byte[] value;
 				if (!TryGetValue (key, out value)) {
-					throw new Exception ("Failed to read value of " + key + " (path: " + _Pathes.GetPath (key) + ")");
+					throw new Exception ("Failed to read value of " + key + " (path: " + _Root + "/" + key + ")");
 				}
 				return value;
 			}
@@ -63,7 +54,7 @@ namespace Zysl.BinStores
 
 		public bool ContainsKey (string key)
 		{
-			var path = _Pathes.GetPath (key);
+			var path = _Root + "/" + key;
 			return File.Exists (path);
 		}
 
@@ -74,7 +65,7 @@ namespace Zysl.BinStores
 				return false;
 			}
 
-			var path = _Pathes.GetPath (key);
+			var path = _Root + "/" + key;
 			using (var file = new FileStream (path, FileMode.Open, FileAccess.Read)) {
 				value = file.ReadAll ();
 			}
@@ -92,7 +83,7 @@ namespace Zysl.BinStores
 			 * NTFS). If the operation is not completed due to power outage etc a
 			 * consistent state will be restored upon restarting this class.
 			 */
-			var path = _Pathes.GetPath (key);
+			var path = _Root + "/" + key;
 			var tmp = path.Insert (path.Length - Path.GetFileName (path).Length, CachePrefix);
 
 			using (var file = new FileStream (tmp, FileMode.Create, FileAccess.Write)) {
@@ -105,7 +96,7 @@ namespace Zysl.BinStores
 
 		public bool Remove (string key)
 		{
-			var path = _Pathes.GetPath (key);
+			var path = _Root + "/" + key;
 
 			if (File.Exists (path)) {
 				File.Delete (path);
@@ -128,21 +119,21 @@ namespace Zysl.BinStores
 
 		public IEnumerable<string> ListKeys ()
 		{
-			var files = Directory.GetFiles (_Pathes.Root, "*", SearchOption.AllDirectories);
-			return files.Select (x => x.Substring (_Pathes.Root.Length));
+			var files = Directory.GetFiles (_Root, "*", SearchOption.TopDirectoryOnly);
+			return files.Select (x => x.Substring (_Root.Length));
 		}
 
 		public long Count
 		{
 			get
 			{
-				return Directory.GetFiles (_Pathes.Root, "*", SearchOption.AllDirectories).Count ();
+				return Directory.GetFiles (_Root, "*", SearchOption.TopDirectoryOnly).Count ();
 			}
 		}
 
 		public string Name
 		{
-			get { return _Pathes.Root; }
+			get { return _Root; }
 		}
 	}
 }
