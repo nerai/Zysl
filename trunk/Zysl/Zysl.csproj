@@ -48,7 +48,6 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="BinStores\ConcurrentStore.cs" />
-    <Compile Include="BinStores\RelaxedBinStore.cs" />
     <Compile Include="BinStores\DictionaryStore.cs" />
     <Compile Include="BinStores\FileStore.cs" />
     <Compile Include="BinStores\FtpControl.cs" />
