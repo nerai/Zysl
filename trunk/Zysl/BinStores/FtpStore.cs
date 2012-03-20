@@ -59,9 +59,7 @@ namespace Zysl.BinStores
 			}
 			set
 			{
-				if (!TrySetValue (key, value)) {
-					throw new Exception ("Failed to write value of " + key + " (path: " + _Pathes.GetPath (key) + ")");
-				}
+				SetValue (key, value);
 			}
 		}
 
@@ -83,9 +81,8 @@ namespace Zysl.BinStores
 			return true;
 		}
 
-		public bool TrySetValue (string key, byte[] value)
+		private void SetValue (string key, byte[] value)
 		{
-			// todo: dont throw. use a subfolder instead (?)
 			if (Path.GetFileName (key).StartsWith (CachePrefix)) {
 				throw new ArgumentException ("Key must not start with cache prefix <" + CachePrefix + ">", "key");
 			}
@@ -94,10 +91,9 @@ namespace Zysl.BinStores
 			var tmp = path.Insert (path.Length - Path.GetFileName (path).Length, CachePrefix);
 
 			_Ftp.Upload (tmp, value);
-			if (!_Ftp.Delete (path)) {
-				return false;
-			}
-			return _Ftp.Rename (tmp, path);
+
+			_Ftp.Delete (path);
+			_Ftp.Rename (tmp, path);
 		}
 
 		public bool Remove (string key)
