@@ -13,7 +13,16 @@ namespace Zysl.Test
 		{
 			TestSimple ();
 			TestAutoCtor ();
+			TestCached ();
 			new BlockingSetTest ().Test ();
+		}
+
+		private static void TestCached ()
+		{
+			var backing = new GenericBackedCache (
+				new DictionaryStore (),
+				new FileStore ("./myBackingStore"));
+			var store = new KVStore<string, DateTime> (backing);
 		}
 
 		private static void TestAutoCtor ()
