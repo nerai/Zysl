@@ -90,8 +90,41 @@ namespace Zysl.BinStores
 
 			_Ftp.Upload (tmp, value);
 
-			_Ftp.Delete (path);
-			_Ftp.Rename (tmp, path);
+			if (!_Ftp.Delete (path)) {
+				throw new IOException ("Failed to delete temporary file on server.");
+			}
+			if (!_Ftp.Rename (tmp, path)) {
+				throw new IOException ("Failed to rename temporary file on server.");
+			}
+		}
+
+		public bool AttemptSetValue (string key, byte[] value)
+		{
+			try {
+				SetValue (key, value);
+				return true;
+			}
+			catch (ArgumentException ex) {
+				return false;
+			}
+			catch (IOException ex) {
+				return false;
+			}
+		}
+
+		public bool AttemptSetValue (string key, out byte[] value)
+		{
+			try {
+				return TryGetValue (key, out value);
+			}
+			catch (ArgumentException ex) {
+				value = null;
+				return false;
+			}
+			catch (IOException ex) {
+				value = null;
+				return false;
+			}
 		}
 
 		public bool Remove (string key)

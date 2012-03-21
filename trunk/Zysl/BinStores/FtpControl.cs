@@ -99,7 +99,7 @@ namespace Zysl.BinStores
 
 			var request = CreateRequest (WebRequestMethods.Ftp.GetFileSize, "/" + filename);
 
-			try {
+			try { // todo: why catch?
 				using (var response = (FtpWebResponse) request.GetResponse ()) {
 					_L.Info (response.StatusDescription);
 				}
@@ -116,7 +116,7 @@ namespace Zysl.BinStores
 
 			var request = CreateRequest (WebRequestMethods.Ftp.DeleteFile, "/" + filename);
 
-			try {
+			try { // todo: why catch?
 				using (var response = (FtpWebResponse) request.GetResponse ()) {
 					_L.Info (response.StatusDescription);
 				}
