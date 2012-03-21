@@ -112,7 +112,7 @@ namespace Zysl.BinStores
 			}
 		}
 
-		public bool AttemptSetValue (string key, out byte[] value)
+		public bool AttemptGetValue (string key, out byte[] value)
 		{
 			try {
 				return TryGetValue (key, out value);
