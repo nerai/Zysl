@@ -5,11 +5,11 @@ using System.Runtime.InteropServices;
 // General Information about an assembly is controlled through the following
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
-[assembly: AssemblyTitle ("Ezysl")]
+[assembly: AssemblyTitle ("Zysl")]
 [assembly: AssemblyDescription ("")]
 [assembly: AssemblyConfiguration ("")]
 [assembly: AssemblyCompany ("")]
-[assembly: AssemblyProduct ("Ezysl")]
+[assembly: AssemblyProduct ("Zysl")]
 [assembly: AssemblyCopyright ("Copyright © 2012 Sebastian 'mafutrct' Heuchler")]
 [assembly: AssemblyTrademark ("")]
 [assembly: AssemblyCulture ("")]
