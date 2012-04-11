@@ -17,7 +17,6 @@ namespace Zysl.KVS
 		IDisposable,
 		IKVStore<TKey, TValue>
 	{
-		[ThreadStatic]
 		private static SHA512Managed _Sha = new SHA512Managed ();
 
 		public enum SerializationMethod
