@@ -9,36 +9,33 @@ namespace Zysl.BinStores
 {
 	public class FtpStore : IBinStore
 	{
-		private const string CachePrefix = "FS_cache_";
-
 		private readonly FtpControl _Ftp;
 		private readonly string _Root;
+		private readonly string _Tmp;
 
 		public FtpStore (string server, string user, string pass, bool passive, string root)
 		{
 			_Ftp = new FtpControl (server, user, pass, passive);
 			_Root = root;
+			_Tmp = _Root + "/tmp";
 			_Ftp.CreateDirectory (_Root);
+			_Ftp.CreateDirectory (_Tmp);
 
 			/*
 			 * Recovery process, see FileStore class
 			 */
-			foreach (var file in ListKeys ()) {
+			foreach (var file in ListKeys (_Tmp)) {
 				// todo: getfilelist sollte bereits nach cache prefix filtern damit nicht so viel ankommt
-				// todo: prüfen wie genau file path augebaut ist und ob er zu lang ist (enthält CWD?)
-
-				if (!Path.GetFileName (file).StartsWith (CachePrefix)) {
-					continue;
-				}
+				// todo: prüfen wie genau file path augebaut ist und ob er zu lang ist (enthält komplettes CWD?)
 
 				if (_Ftp.Exists (_Root + file)) {
-					if (!_Ftp.Delete (_Root + CachePrefix + file)) {
-						throw new Exception ("FTP recovery process failed: Unable to delete cache file " + file);
+					if (!_Ftp.Delete (_Tmp + file)) {
+						throw new Exception ("FTP recovery process failed: Unable to delete temp file " + file);
 					}
 				}
 				else {
-					if (!_Ftp.Rename (_Root + CachePrefix + file, _Root + file)) {
-						throw new Exception ("FTP recovery process failed: Unable to move cache file " + file);
+					if (!_Ftp.Rename (_Tmp + file, _Root + file)) {
+						throw new Exception ("FTP recovery process failed: Unable to move temp file " + file);
 					}
 				}
 			}
@@ -80,13 +77,8 @@ namespace Zysl.BinStores
 
 		private void SetValue (string key, byte[] value)
 		{
-			// todo: use subfolder instead (in filestore too)
-			if (Path.GetFileName (key).StartsWith (CachePrefix)) {
-				throw new ArgumentException ("Key must not start with cache prefix <" + CachePrefix + ">", "key");
-			}
-
 			var path = _Root + "/" + key;
-			var tmp = path.Insert (path.Length - Path.GetFileName (path).Length, CachePrefix);
+			var tmp = _Tmp + "/" + key;
 
 			_Ftp.Upload (tmp, value);
 
@@ -148,12 +140,17 @@ namespace Zysl.BinStores
 			return _Ftp.Ping ();
 		}
 
-		public IEnumerable<string> ListKeys ()
+		private IEnumerable<string> ListKeys (string dir)
 		{
-			foreach (var file in _Ftp.GetFileList (_Root)) {
+			foreach (var file in _Ftp.GetFileList (dir)) {
 				// todo: liefert das den namen, pfad oder pfad inkl root?? entsprechend abschneiden...
 				yield return file;
 			}
+		}
+
+		public IEnumerable<string> ListKeys ()
+		{
+			return ListKeys (_Root);
 		}
 
 		public long Count

@@ -11,21 +11,22 @@ namespace Zysl.BinStores
 {
 	public class FileStore : IBinStore
 	{
-		private const string CachePrefix = "._FS_cache_";
-
 		private readonly string _Root;
+		private readonly string _Tmp;
 
 		public FileStore (string root)
 		{
 			_Root = root;
+			_Tmp = _Root + "/tmp";
 			Directory.CreateDirectory (_Root);
+			Directory.CreateDirectory (_Tmp);
 
 			/*
 			 * Recovery process, as per http://stackoverflow.com/questions/9096380/implementing-atomic-file-writes-in-a-nontransactional-filesystem
 			 * This is required for acting as if NTFS supported atomic write natively.
 			 */
-			foreach (var path in Directory.GetFiles (_Root, CachePrefix + "*", SearchOption.AllDirectories)) {
-				var file = path.Substring (_Root.Length + CachePrefix.Length);
+			foreach (var path in Directory.GetFiles (_Tmp, "*", SearchOption.TopDirectoryOnly)) {
+				var file = path.Substring (_Tmp.Length);
 
 				if (File.Exists (_Root + file)) {
 					File.Delete (path);
@@ -74,17 +75,13 @@ namespace Zysl.BinStores
 
 		private void SetValue (string key, byte[] value)
 		{
-			if (Path.GetFileName (key).StartsWith (CachePrefix)) {
-				throw new ArgumentException ("Key must not start with cache prefix <" + CachePrefix + ">", "key");
-			}
-
 			/*
 			 * Note that this acts atomic as long as FileMove is atomic (the case on
 			 * NTFS). If the operation is not completed due to power outage etc a
 			 * consistent state will be restored upon restarting this class.
 			 */
 			var path = _Root + "/" + key;
-			var tmp = path.Insert (path.Length - Path.GetFileName (path).Length, CachePrefix);
+			var tmp = _Tmp + "/" + key;
 
 			using (var file = new FileStream (tmp, FileMode.Create, FileAccess.Write)) {
 				file.Write (value, 0, value.Length);
