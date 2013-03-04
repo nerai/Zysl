@@ -52,7 +52,7 @@
   <ItemGroup>
     <ProjectReference Include="..\Zysl\Zysl.csproj">
       <Project>{7551B343-386B-43B7-81C6-B350DF0EB188}</Project>
-      <Name>Ezysl</Name>
+      <Name>Zysl</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
