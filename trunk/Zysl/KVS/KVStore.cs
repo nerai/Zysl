@@ -26,7 +26,7 @@ namespace Zysl.KVS
 			Protobuf,
 		}
 
-		SerializationMethod _SerializationMethod;
+		private SerializationMethod _SerializationMethod;
 		private readonly NetDataContractSerializer _Ser = null;
 
 		private readonly IBinStore _Backing;
@@ -53,6 +53,7 @@ namespace Zysl.KVS
 				case SerializationMethod.NetDataContract:
 					_Ser = new NetDataContractSerializer ();
 					break;
+
 				default:
 					throw new ArgumentException ();
 			}
@@ -71,10 +72,10 @@ namespace Zysl.KVS
 			char[] c = new char[p.Length * 2];
 			byte b;
 			for (int y = 0, x = 0; y < p.Length; ++y, ++x) {
-				b = ((byte) (p[y] >> 4));
-				c[x] = (char) (b > 9 ? b + 0x37 : b + 0x30);
-				b = ((byte) (p[y] & 0xF));
-				c[++x] = (char) (b > 9 ? b + 0x37 : b + 0x30);
+				b = ((byte)(p[y] >> 4));
+				c[x] = (char)(b > 9 ? b + 0x37 : b + 0x30);
+				b = ((byte)(p[y] & 0xF));
+				c[++x] = (char)(b > 9 ? b + 0x37 : b + 0x30);
 			}
 			return new string (c);
 		}
@@ -102,6 +103,7 @@ namespace Zysl.KVS
 					case SerializationMethod.NetDataContract:
 						_Ser.Serialize (buf, item);
 						break;
+
 					case SerializationMethod.Protobuf:
 						Serializer.Serialize<KeyValuePair<TKey, TValue>> (buf, item);
 						break;
@@ -117,12 +119,12 @@ namespace Zysl.KVS
 			var bytes = _Backing[path];
 			var stream = new MemoryStream (bytes);
 			if (stream.Length == 0) {
-				throw new Exception ();
+				throw new Exception (); // ? todo
 			}
 
 			switch (_SerializationMethod) {
 				case SerializationMethod.NetDataContract:
-					return (KeyValuePair<TKey, TValue>) _Ser.Deserialize (stream);
+					return (KeyValuePair<TKey, TValue>)_Ser.Deserialize (stream);
 				case SerializationMethod.Protobuf:
 					return Serializer.Deserialize<KeyValuePair<TKey, TValue>> (stream);
 				default:
