@@ -43,7 +43,7 @@ namespace Zysl.BinStores
 			{
 				byte[] value;
 				if (!TryGetValue (key, out value)) {
-					throw new Exception ("Failed to read value of " + key + " (path: " + _Root + "/" + key + ")");
+					throw new KeyNotFoundException ("Failed to read value of " + key + " (path: " + _Root + "/" + key + ")");
 				}
 				return value;
 			}

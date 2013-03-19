@@ -30,12 +30,12 @@ namespace Zysl.BinStores
 
 				if (_Ftp.Exists (_Root + file)) {
 					if (!_Ftp.Delete (_Tmp + file)) {
-						throw new Exception ("FTP recovery process failed: Unable to delete temp file " + file);
+						throw new IOException ("FTP recovery process failed: Unable to delete temp file " + file);
 					}
 				}
 				else {
 					if (!_Ftp.Rename (_Tmp + file, _Root + file)) {
-						throw new Exception ("FTP recovery process failed: Unable to move temp file " + file);
+						throw new IOException ("FTP recovery process failed: Unable to move temp file " + file);
 					}
 				}
 			}
@@ -47,7 +47,7 @@ namespace Zysl.BinStores
 			{
 				byte[] value;
 				if (!TryGetValue (key, out value)) {
-					throw new Exception ("Failed to read value of " + key + " (path: " + _Root + "/" + key + ")");
+					throw new KeyNotFoundException ("Failed to read value of " + key + " (path: " + _Root + "/" + key + ")");
 				}
 				return value;
 			}
