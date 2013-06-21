@@ -7,8 +7,6 @@ using System.Linq;
 using System.Runtime.Serialization;
 using System.Security.Cryptography;
 using System.Text;
-using ProtoBuf;
-using ProtoBuf.Meta;
 using Zysl.BinStores;
 
 namespace Zysl.KVS
@@ -19,18 +17,14 @@ namespace Zysl.KVS
 	{
 		private static SHA512Managed _Sha = new SHA512Managed ();
 
-		public enum SerializationMethod
-		{
-			Default = 0,
-			NetDataContract = Default,
-			Protobuf,
-		}
-
-		private SerializationMethod _SerializationMethod;
-		private readonly NetDataContractSerializer _Ser = null;
-
 		private readonly IBinStore _Backing;
 		private readonly string _Prefix;
+		private readonly NetDataContractSerializer _Ser;
+
+		public KVStore (string path) :
+			this (new FileStore (path))
+		{
+		}
 
 		public KVStore () :
 			this (new FileStore ("./KVS~" + typeof (TKey).ToString () + "~" + typeof (TValue).ToString ()))
@@ -38,25 +32,10 @@ namespace Zysl.KVS
 		}
 
 		public KVStore (IBinStore backing)
-
-			: this (backing, SerializationMethod.NetDataContract)
-		{
-		}
-
-		public KVStore (IBinStore backing, SerializationMethod serializer)
 		{
 			_Backing = backing;
-			_SerializationMethod = serializer;
-			_Prefix = "KVStore " + _SerializationMethod.ToString () + " " + backing.Name + " " + typeof (TKey).ToString () + " " + typeof (TValue).ToString () + " ";
-
-			switch (serializer) {
-				case SerializationMethod.NetDataContract:
-					_Ser = new NetDataContractSerializer ();
-					break;
-
-				default:
-					throw new ArgumentException ();
-			}
+			_Prefix = "KVStore " + backing.Name + " " + typeof (TKey).ToString () + " " + typeof (TValue).ToString () + " ";
+			_Ser = new NetDataContractSerializer ();
 		}
 
 		private string GetPath (TKey key)
@@ -72,10 +51,10 @@ namespace Zysl.KVS
 			char[] c = new char[p.Length * 2];
 			byte b;
 			for (int y = 0, x = 0; y < p.Length; ++y, ++x) {
-				b = ((byte)(p[y] >> 4));
-				c[x] = (char)(b > 9 ? b + 0x37 : b + 0x30);
-				b = ((byte)(p[y] & 0xF));
-				c[++x] = (char)(b > 9 ? b + 0x37 : b + 0x30);
+				b = ((byte) (p[y] >> 4));
+				c[x] = (char) (b > 9 ? b + 0x37 : b + 0x30);
+				b = ((byte) (p[y] & 0xF));
+				c[++x] = (char) (b > 9 ? b + 0x37 : b + 0x30);
 			}
 			return new string (c);
 		}
@@ -99,16 +78,7 @@ namespace Zysl.KVS
 			var item = new KeyValuePair<TKey, TValue> (key, value);
 
 			using (var buf = new MemoryStream ()) {
-				switch (_SerializationMethod) {
-					case SerializationMethod.NetDataContract:
-						_Ser.Serialize (buf, item);
-						break;
-
-					case SerializationMethod.Protobuf:
-						Serializer.Serialize<KeyValuePair<TKey, TValue>> (buf, item);
-						break;
-				}
-
+				_Ser.Serialize (buf, item);
 				var p = GetPath (key);
 				_Backing[p] = buf.ToArray ();
 			}
@@ -121,15 +91,7 @@ namespace Zysl.KVS
 			if (stream.Length == 0) {
 				throw new Exception (); // ? todo
 			}
-
-			switch (_SerializationMethod) {
-				case SerializationMethod.NetDataContract:
-					return (KeyValuePair<TKey, TValue>)_Ser.Deserialize (stream);
-				case SerializationMethod.Protobuf:
-					return Serializer.Deserialize<KeyValuePair<TKey, TValue>> (stream);
-				default:
-					throw new InvalidProgramException ();
-			}
+			return (KeyValuePair<TKey, TValue>) _Ser.Deserialize (stream);
 		}
 
 		public IEnumerator<KeyValuePair<TKey, TValue>> GetEnumerator ()

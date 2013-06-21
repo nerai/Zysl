@@ -7,8 +7,6 @@ using System.Linq;
 using System.Runtime.Serialization;
 using System.Security.Cryptography;
 using System.Text;
-using ProtoBuf;
-using ProtoBuf.Meta;
 
 namespace Zysl.KVS
 {
