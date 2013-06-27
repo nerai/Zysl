@@ -10,7 +10,7 @@ using System.Runtime.InteropServices;
 [assembly: AssemblyConfiguration ("")]
 [assembly: AssemblyCompany ("")]
 [assembly: AssemblyProduct ("Zysl")]
-[assembly: AssemblyCopyright ("Copyright © 2012 Sebastian 'mafutrct' Heuchler")]
+[assembly: AssemblyCopyright ("Copyright © 2012-2013 Sebastian Heuchler")]
 [assembly: AssemblyTrademark ("")]
 [assembly: AssemblyCulture ("")]
 
