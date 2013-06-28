@@ -18,5 +18,9 @@ namespace Zysl.KVS
 		TValue this[TKey key] { get; set; }
 
 		bool TryGetValue (TKey key, out TValue value);
+
+		IEnumerable<TKey> Keys { get; }
+
+		IEnumerable<TValue> Values { get; }
 	}
 }

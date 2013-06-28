@@ -147,5 +147,21 @@ namespace Zysl.KVS
 		{
 			_Backing.Dispose ();
 		}
+
+		public IEnumerable<TKey> Keys
+		{
+			get
+			{
+				return this.Select (x => x.Key);
+			}
+		}
+
+		public IEnumerable<TValue> Values
+		{
+			get
+			{
+				return this.Select (x => x.Value);
+			}
+		}
 	}
 }

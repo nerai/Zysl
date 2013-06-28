@@ -94,5 +94,25 @@ namespace Zysl.KVS
 				_Backing.Dispose ();
 			}
 		}
+
+		public IEnumerable<TKey> Keys
+		{
+			get
+			{
+				using (_Lock.Block ()) {
+					return _Backing.Keys;
+				}
+			}
+		}
+
+		public IEnumerable<TValue> Values
+		{
+			get
+			{
+				using (_Lock.Block ()) {
+					return _Backing.Values;
+				}
+			}
+		}
 	}
 }
