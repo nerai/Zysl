@@ -117,7 +117,7 @@ namespace Zysl.BinStores
 		public IEnumerable<string> ListKeys ()
 		{
 			var files = Directory.GetFiles (_Root, "*", SearchOption.TopDirectoryOnly);
-			return files.Select (x => x.Substring (_Root.Length));
+			return files.Select (x => x.Substring (_Root.Length + 1));
 		}
 
 		public long Count
