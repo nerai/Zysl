@@ -44,6 +44,7 @@ namespace Zysl.BinStores
 				 */
 				var oldEff = EfficiencyFactor;
 				EfficiencyFactor = 0.5 * EfficiencyFactor + 0.5 * _AccessCache.Values.Sum () / _AccessCache.Count;
+				/*
 				_Log.Info ("Cache.Compact: MaxSize {0}, Dirty {1}, Access {2}, AccessSum {3}, efficiency previous {4:0.00}, now {5:0.00}. Cache {6} items, Backend {7} items.",
 					 MaxSize,
 					 _Dirty.Count,
@@ -53,6 +54,7 @@ namespace Zysl.BinStores
 					 EfficiencyFactor,
 					 _Cache.Count,
 					 _Files.Count);
+				*/
 
 				/*
 				 * compact cache
