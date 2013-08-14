@@ -18,7 +18,6 @@ namespace Zysl.KVS
 		private static SHA512Managed _Sha = new SHA512Managed ();
 
 		private readonly IBinStore _Backing;
-		private readonly string _Prefix;
 		private readonly NetDataContractSerializer _Ser;
 
 		public KVStore (string path) :
@@ -34,13 +33,27 @@ namespace Zysl.KVS
 		public KVStore (IBinStore backing)
 		{
 			_Backing = backing;
-			_Prefix = "KVStore " + backing.Name + " " + typeof (TKey).ToString () + " " + typeof (TValue).ToString () + " ";
 			_Ser = new NetDataContractSerializer ();
+		}
+
+		public void RepairFileIds ()
+		{
+			foreach (var file in _Backing.ListKeys ()) {
+				var item = ReadItem (file);
+				try {
+					var test = this[item.Key];
+				}
+				catch (Exception ex) {
+					Console.WriteLine ("Fixing item " + item.Key + " in " + file);
+					WriteItem (file, item.Key, item.Value);
+					_Backing.Remove (file);
+				}
+			}
 		}
 
 		private string GetPath (TKey key)
 		{
-			var text = _Prefix + key.ToString ();
+			var text = key.ToString ();
 			var bytes = ASCIIEncoding.UTF8.GetBytes (text);
 			var hash = _Sha.ComputeHash (bytes);
 			return bytes.Length + "-" + HexStr (hash);
