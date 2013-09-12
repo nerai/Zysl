@@ -56,7 +56,7 @@ namespace Zysl.KVS
 			var text = key.ToString ();
 			var bytes = ASCIIEncoding.UTF8.GetBytes (text);
 			var hash = _Sha.ComputeHash (bytes);
-			return bytes.Length + "-" + HexStr (hash);
+			return HexStr (hash);
 		}
 
 		private static string HexStr (byte[] p)
